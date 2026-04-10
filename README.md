@@ -28,7 +28,16 @@ open build/reports/tests/test/index.html
 
 
 
-#BuildCommands
+
+
+
+
+
+
+
+
+
+
 
 # Clean build
 ./gradlew clean
