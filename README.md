@@ -10,3 +10,21 @@
 | Database (Testing) | H2 | Latest |
 | Build Tool | Gradle | 8.x |
 | Testing | JUnit 5 + AssertJ | Latest |
+
+
+# TestCommands
+
+# Run all tests
+./gradlew test
+
+# Run specific test class
+./gradlew test --tests "SellerServiceTest"
+
+# Run tests with coverage report
+./gradlew test jacocoTestReport
+
+# View test report
+open build/reports/tests/test/index.html
+
+# View coverage report
+open build/reports/jacoco/test/html/index.html
