@@ -25,3 +25,21 @@
 
 # View test report
 open build/reports/tests/test/index.html
+
+
+
+#BuildCommands
+
+# Clean build
+./gradlew clean
+
+# Compile and build JAR
+./gradlew build
+
+# Build without running tests
+./gradlew build -x test
+
+# Create executable JAR only
+./gradlew bootJar
+
+
