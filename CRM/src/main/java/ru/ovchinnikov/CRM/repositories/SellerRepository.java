@@ -9,11 +9,21 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SellerRepository extends JpaRepository<Seller, Integer> {
-    List<Seller> findAll();
+    @Query("SELECT s FROM Seller s WHERE s.originalId_ = :id ORDER BY s.version_ ASC")
+    List<Seller> findAllVersions(@Param("id") Integer id);
 
-    @Query("SELECT t FROM Transaction t WHERE t.id_ = :id AND t.validTo_ IS NULL")
+    @Query("SELECT s FROM Seller s WHERE s.originalId_ = :id AND s.isCurrent_ = true")
     Optional<Seller> findCurrentById(@Param("id") Integer id);
 
-    @Query("SELECT t FROM Transaction t WHERE (t.originalId_ = :id OR t.id_ = :id) ORDER BY t.version_")
-    List<Seller> findAllVersions(@Param("id") Integer id);
+    @Query("SELECT t.seller_ FROM Transaction t " +
+       "GROUP BY t.seller_ " +
+       "ORDER BY SUM(t.amount_) DESC " +
+       "LIMIT 1")
+    Optional<Seller> findTopSellerByTotalAmount();
+
+    @Query("SELECT t.seller_ FROM Transaction t " +
+           "GROUP BY t.seller_ " +
+           "HAVING SUM(t.amount_) < :amount")
+    List<Seller> findSellersTotalAmountLessThan(@Param("amount") Integer amount);
+
 }

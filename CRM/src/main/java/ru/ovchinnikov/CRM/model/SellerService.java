@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.ovchinnikov.CRM.repositories.SellerRepository;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SellerService {
@@ -38,21 +39,25 @@ public class SellerService {
         return sellerRepository.save(newVersion);
     }
 
-    @Transactional
-    public Seller createSeller(String name, String contactInfo){
-        Seller seller = new Seller();
+    public List<Seller> getSellerHistory(Integer id) {
+        Seller current = sellerRepository.findCurrentById(id)
+            .orElseThrow(() -> new RuntimeException("Seller not found with id: " + id));
+        return sellerRepository.findAllVersions(id);
+    }
 
-        seller.setValidTo(null);
+    @Transactional
+    public Seller createSeller(String name, String contactInfo) {
+        Seller seller = new Seller();
         seller.setName(name);
-        seller.setId(seller.getId());
         seller.setContactInfo(contactInfo);
         seller.setCurrent(true);
         seller.setValidFrom(LocalDateTime.now());
         seller.setRegistrationDate(LocalDateTime.now());
-        seller.setOriginalId(seller.getId());
         seller.setVersion(1);
 
-        return sellerRepository.save(seller);
+        Seller saved = sellerRepository.save(seller);
+        saved.setOriginalId(saved.getId());
+        return sellerRepository.save(saved);
     }
 
     @Transactional
@@ -65,15 +70,21 @@ public class SellerService {
             .orElseThrow(() -> new RuntimeException("Seller not found"));
     }
 
-    public List<Seller> getSellerHistory(Integer id) {
-        return sellerRepository.findAllVersions(id);
+    public List<Seller> getAllSellers() {
+        return sellerRepository.findAll();
     }
 
     @Transactional
-    public void getBestSeller() {
-        List<Seller> sellerList = sellerRepository.findAll();
-        for (int i = 0; i<sellerList.size(); i++){
-            System.out.println(sellerList.get(i));
+    public Seller getBestSeller() {
+        Optional<Seller> result = sellerRepository.findTopSellerByTotalAmount();
+
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            throw new RuntimeException("No sellers with transactions");
         }
     }
+
+   public List<Seller> getSellersWithLowRevenue(Integer maxAmount) {
+        return sellerRepository.findSellersTotalAmountLessThan(maxAmount);}
 }

@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Integer> {
-    @Query("SELECT s FROM Seller s WHERE s.id_ = :id AND s.validTo_ IS NULL")
+    @Query("SELECT t FROM Transaction t WHERE t.id_ = :id")
     Optional<Transaction> findCurrentById(@Param("id") Integer id);
 
-    @Query("SELECT s FROM Seller s WHERE (s.originalId_ = :id OR s.id_ = :id) ORDER BY s.version_")
-    List<Transaction> findAllTransactions(@Param("id") Integer id);
+    @Query("SELECT t FROM Transaction t WHERE t.seller_.id_ = :sellerId")
+    List<Transaction> findAllTransactionsBySellerId(@Param("sellerId") Integer sellerId);
 }

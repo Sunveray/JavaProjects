@@ -42,7 +42,7 @@ public class Transaction {
     }
 
     private LocalDateTime transcationDate_;
-    public void setTranscationDate(LocalDateTime transcationDate_) {
+    public void setTransactionDate(LocalDateTime transcationDate_) {
         this.transcationDate_ = transcationDate_;
     }
     public LocalDateTime getTranscationDate() {
