@@ -25,6 +25,3 @@
 
 # View test report
 open build/reports/tests/test/index.html
-
-# View coverage report
-open build/reports/jacoco/test/html/index.html
